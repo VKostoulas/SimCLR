@@ -1,0 +1,10 @@
+# ignore everything
+*
+
+# except this
+!.gitignore
+!requirements.txt
+!main.py
+!settings.py
+!data_functions.py
+!model_functions.py
