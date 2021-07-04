@@ -1,4 +1,4 @@
-# SimCLR implementation and training on Patch Camelyon Dataset.
+# SimCLR implementation and training on Patch Camelyon Dataset with Tensorflow 2 and Keras.
 
 - Base code taken from https://keras.io/examples/vision/semisupervised_simclr/.
 - Custom created CNN architecture.
