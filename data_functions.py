@@ -93,7 +93,7 @@ class RandomColorDistortion(layers.Layer):
         if training:
             images = tf.image.random_brightness(images, self.brightness)
             images = tf.image.random_saturation(images, self.saturation_low, self.saturation_up)
-            images = tf.image.random_saturation(images, self.contrast_low, self.contrast_up)
+            images = tf.image.random_contrast(images, self.contrast_low, self.contrast_up)
             images = tf.clip_by_value(images, 0, 1)
         return images
 
@@ -138,7 +138,7 @@ def get_augmenter(min_area, brightness, contrast_low, contrast_up, saturation_lo
     block.add(preprocessing.RandomFlip("horizontal_and_vertical"))  # this only for medical data, else "horizontal"
     # block.add(preprocessing.RandomTranslation(zoom_factor / 2, zoom_factor / 2))
     # block.add(preprocessing.RandomRotation(zoom_factor/2))
-    block.add(preprocessing.RandomZoom((-zoom_factor, 0.0), (-zoom_factor, 0.0)))
+    # block.add(preprocessing.RandomZoom((-zoom_factor, 0.0), (-zoom_factor, 0.0)))
     # block.add(RandomColorAffine(brightness, jitter))
     block.add(RandomColorDistortion(brightness, contrast_low, contrast_up, saturation_low, saturation_up))
     # block.add(GaussianBlur())

@@ -19,7 +19,6 @@ if __name__ == '__main__':
 
     s.configure(local_settings)
 
-    # Load STL10 dataset
     train_dataset, labeled_train_dataset, test_dataset = prepare_dataset(dataset_name=s.dataset_name,
                                                                          unlabeled_dataset_split=s.unlabeled_dataset_split,
                                                                          labeled_dataset_split=s.labeled_dataset_split,

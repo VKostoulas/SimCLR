@@ -270,7 +270,7 @@ class ContrastiveModel(keras.Model):
         )
         self.contrastive_loss_tracker.update_state(contrastive_loss)
 
-        # Labels are only used in evalutation for an on-the-fly logistic regression
+        # Labels are only used in evaluation for an on-the-fly logistic regression
         preprocessed_images = self.classification_augmenter(labeled_images)
         with tf.GradientTape() as tape:
             features = self.encoder(preprocessed_images)

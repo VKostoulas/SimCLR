@@ -17,9 +17,9 @@ width = 1024
 temperature = 0.1
 
 # Stronger augmentations for contrastive, weaker ones for supervised training
-contrastive_augmentation = {"min_area": 0.25,  "brightness": 0.4, "contrast_low": 0.5, "contrast_up": 2.0,
-                            "saturation_low": 0.75, "saturation_up": 1.25, "elastic_prob": 0.5,
+contrastive_augmentation = {"min_area": 0.25,  "brightness": 0.2, "contrast_low": 0.8, "contrast_up": 2.0,
+                            "saturation_low": 0.7, "saturation_up": 1.4, "elastic_prob": 0.5,
                             "image_size": image_size, "image_channels": image_channels, "resize_shape": resize_size}
-classification_augmentation = {"min_area": 0.55, "brightness": 0.1, "contrast_low": 0.8, "contrast_up": 1.5,
-                               "saturation_low": 0.75, "saturation_up": 1.25, "elastic_prob": 0.5,
+classification_augmentation = {"min_area": 0.55, "brightness": 0.2, "contrast_low": 0.8, "contrast_up": 2.0,
+                               "saturation_low": 0.7, "saturation_up": 1.4, "elastic_prob": 0.5,
                                "image_size": image_size, "image_channels": image_channels, "resize_shape": resize_size}
