@@ -71,26 +71,26 @@ def prepare_tf_dataset(dataset_name, unlabeled_dataset_split, labeled_dataset_sp
     labeled_batch_size, unlabeled_batch_size = define_train_batch_sizes(batch_size, num_of_labeled_examples,
                                                                         num_of_unlabeled_examples)
 
-    unlabeled_train_dataset = unlabeled_train_dataset.shuffle(buffer_size=10 * batch_size)
-    unlabeled_train_dataset = unlabeled_train_dataset.map(lambda x, y: rescale_image((x, y)), num_parallel_calls=-1)
-    unlabeled_train_dataset = unlabeled_train_dataset.map(lambda x, y: augment_image((x, y), **contrastive_augment),
-                                                          num_parallel_calls=-1)
-    unlabeled_train_dataset = unlabeled_train_dataset.batch(unlabeled_batch_size)
-
-    labeled_train_dataset = labeled_train_dataset.shuffle(buffer_size=10 * batch_size)
-    labeled_train_dataset = labeled_train_dataset.map(lambda x, y: rescale_image((x, y)), num_parallel_calls=-1)
-    labeled_train_dataset = labeled_train_dataset.map(lambda x, y: augment_image((x, y), **classification_augment),
-                                                      num_parallel_calls=-1)
-    labeled_train_dataset = labeled_train_dataset.batch(labeled_batch_size)
-
-    test_dataset = test_dataset.shuffle(buffer_size=10 * batch_size)
-    test_dataset = test_dataset.map(lambda x, y: rescale_image((x, y)), num_parallel_calls=-1)
-    test_dataset = test_dataset.batch(batch_size)
-    test_dataset = test_dataset.prefetch(tf.data.experimental.AUTOTUNE)
+    unlabeled_train_dataset = create_tf_dataset(unlabeled_train_dataset, unlabeled_batch_size, 'train',
+                                                contrastive_augment)
+    labeled_train_dataset = create_tf_dataset(labeled_train_dataset, labeled_batch_size, 'train', classification_augment)
+    test_dataset = create_tf_dataset(test_dataset, batch_size, 'test')
 
     train_dataset = zip_and_prefetch_datasets(unlabeled_train_dataset, labeled_train_dataset)
 
     return train_dataset, labeled_train_dataset, test_dataset
+
+
+def create_tf_dataset(dataset, batch_size, mode, augment_args=None):
+    assert mode in ['train', 'test']
+    dataset = dataset.shuffle(buffer_size=10 * batch_size) if mode == 'train' else dataset
+    dataset = dataset.map(lambda x, y: rescale_image((x, y)), num_parallel_calls=-1)
+    if mode == 'train':
+        dataset = dataset.map(lambda x, y: augment_image((x, y), **augment_args), num_parallel_calls=-1)
+    dataset = dataset.batch(batch_size)
+    if mode == 'test':
+        dataset = dataset.prefetch(tf.data.experimental.AUTOTUNE)
+    return dataset
 
 
 def define_train_batch_sizes(batch_size, num_of_labeled_examples, num_of_unlabeled_examples):
