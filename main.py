@@ -8,7 +8,8 @@ import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
 
-from data_functions import prepare_dataset, visualize_augmentations, get_augmenter, plot_training_curves
+from data_functions import prepare_dataset, prepare_tf_dataset, zip_and_prefetch_datasets
+from visualization import visualize_augmentations, visualize_tf_augmentations, get_augmenter, plot_training_curves
 from model_functions import get_encoder, ContrastiveModel
 
 
@@ -19,21 +20,28 @@ if __name__ == '__main__':
 
     s.configure(local_settings)
 
-    train_dataset, labeled_train_dataset, test_dataset = prepare_dataset(dataset_name=s.dataset_name,
-                                                                         unlabeled_dataset_split=s.unlabeled_dataset_split,
-                                                                         labeled_dataset_split=s.labeled_dataset_split,
-                                                                         test_dataset_split=s.test_dataset_split,
-                                                                         batch_size=s.batch_size)
+    # train_dataset, labeled_train_dataset, test_dataset = prepare_dataset(dataset_name=s.dataset_name,
+    #                                                                      unlabeled_dataset_split=s.unlabeled_dataset_split,
+    #                                                                      labeled_dataset_split=s.labeled_dataset_split,
+    #                                                                      test_dataset_split=s.test_dataset_split,
+    #                                                                      batch_size=s.batch_size)
 
-    visualize_augmentations(num_images=8, train_dataset=train_dataset,
-                            classification_augmentation=s.classification_augmentation,
-                            contrastive_augmentation=s.contrastive_augmentation)
+    dataset_args = {"dataset_name": s.dataset_name, "unlabeled_dataset_split": s.unlabeled_dataset_split,
+                    "labeled_dataset_split": s.labeled_dataset_split, "test_dataset_split": s.test_dataset_split,
+                    "batch_size": s.batch_size, "classification_augment": s.classification_augmentation,
+                    "contrastive_augment": s.contrastive_augmentation}
+
+    train_dataset, labeled_train_dataset, test_dataset = prepare_tf_dataset(**dataset_args)
+
+    visualize_tf_augmentations(num_images=8, test_dataset=test_dataset,
+                               classification_augmentation=s.classification_augmentation,
+                               contrastive_augmentation=s.contrastive_augmentation)
 
     # Baseline supervised training with random initialization
     baseline_model = keras.Sequential(
         [
             keras.Input(shape=(s.image_size, s.image_size, s.image_channels)),
-            get_augmenter(**s.classification_augmentation),
+            # get_augmenter(**s.classification_augmentation),
             get_encoder(image_size=s.image_size, image_channels=s.image_channels, width=s.width),
             layers.Dense(s.num_of_classes),
         ],
